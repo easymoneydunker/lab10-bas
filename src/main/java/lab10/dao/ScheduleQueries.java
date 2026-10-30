@@ -11,10 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * Запросы на извлечение информации. Все запросы выполняются через JdbcTemplate
- * как компилированные (PreparedStatement) с параметрами "?".
- */
 @Repository
 public class ScheduleQueries {
 
@@ -89,22 +85,18 @@ public class ScheduleQueries {
         this.jdbc = connection.getJdbcTemplate();
     }
 
-    /** Преподаватели, работающие в заданный день недели в заданной аудитории. */
     public List<Teacher> findTeachersByDayAndClassroom(int dayId, String classroom) {
         return jdbc.query(SELECT_TEACHERS_BY_DAY_AND_ROOM, TEACHER_MAPPER, dayId, classroom);
     }
 
-    /** Преподаватели, которые не ведут занятия в заданный день недели. */
     public List<Teacher> findTeachersFreeOnDay(int dayId) {
         return jdbc.query(SELECT_TEACHERS_FREE_ON_DAY, TEACHER_MAPPER, dayId);
     }
 
-    /** Дни недели, в которые проводится заданное количество занятий. */
     public List<DayStat> findDaysByLessonCount(int count) {
         return jdbc.query(SELECT_DAYS_BY_LESSON_COUNT, DAY_STAT_MAPPER, count);
     }
 
-    /** Дни недели, в которые занято заданное количество аудиторий. */
     public List<DayStat> findDaysByClassroomCount(int count) {
         return jdbc.query(SELECT_DAYS_BY_CLASSROOM_COUNT, DAY_STAT_MAPPER, count);
     }

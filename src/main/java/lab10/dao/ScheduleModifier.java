@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-/** Модификация информации в БД. */
 @Repository
 public class ScheduleModifier {
 
@@ -44,12 +43,6 @@ public class ScheduleModifier {
         this.jdbc = connection.getJdbcTemplate();
     }
 
-    /**
-     * Переносит первые занятия заданных дней недели на последнее место:
-     * пары с минимальным номером получают номер "последняя пара + 1".
-     *
-     * @return количество перенесенных занятий
-     */
     @Transactional
     public int moveFirstLessonsToEnd(Collection<Integer> dayIds) {
         int moved = 0;

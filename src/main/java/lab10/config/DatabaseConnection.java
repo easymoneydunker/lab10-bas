@@ -7,10 +7,6 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.Connection;
 
-/**
- * Организация соединения с БД. Параметры подключения берутся из application.properties,
- * пул соединений (HikariCP) создается Spring Boot.
- */
 @Component
 public class DatabaseConnection {
 
@@ -22,10 +18,6 @@ public class DatabaseConnection {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    /**
-     * Возвращает соединение с БД (привязанное к текущей транзакции, если она есть).
-     * Закрывать через {@link #releaseConnection(Connection)}.
-     */
     public Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource);
     }
