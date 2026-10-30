@@ -1,6 +1,5 @@
 package lab10.model;
 
-/** День недели и значение некоторого показателя (количество занятий, аудиторий). */
 public record DayStat(int dayId, String day, int value) {
 
     @Override

@@ -1,6 +1,5 @@
 package lab10.model;
 
-/** Предмет преподавателя: количество пар в неделю и студентов на каждой паре. */
 public record TeacherLoad(String teacher, String subject, int pairsPerWeek, String studentsPerPair) {
 
     @Override

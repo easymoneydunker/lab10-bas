@@ -15,7 +15,10 @@ import java.util.List;
 public class ScheduleQueries {
 
     private static final RowMapper<Teacher> TEACHER_MAPPER = (rs, i) -> new Teacher(
-            rs.getInt("id"), rs.getString("last_name"), rs.getString("first_name"), rs.getString("middle_name"));
+            rs.getInt("id"),
+            rs.getString("last_name"),
+            rs.getString("first_name"),
+            rs.getString("middle_name"));
 
     private static final RowMapper<DayStat> DAY_STAT_MAPPER = (rs, i) -> new DayStat(
             rs.getInt("id"), rs.getString("name"), rs.getInt("cnt"));
