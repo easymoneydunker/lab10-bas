@@ -1,8 +1,11 @@
 package lab10;
 
 import lab10.config.DatabaseConnection;
+import lab10.dao.ScheduleJdbcReader;
 import lab10.dao.ScheduleModifier;
 import lab10.dao.ScheduleQueries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
@@ -17,16 +20,21 @@ import java.util.Scanner;
 @Component
 public class ConsoleMenu implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(ConsoleMenu.class);
+
     private static final String DAYS_HINT =
             "1-Пн, 2-Вт, 3-Ср, 4-Чт, 5-Пт, 6-Сб, 7-Вс";
 
     private final DatabaseConnection databaseConnection;
+    private final ScheduleJdbcReader jdbcReader;
     private final ScheduleQueries queries;
     private final ScheduleModifier modifier;
     private final Scanner in = new Scanner(System.in);
 
-    public ConsoleMenu(DatabaseConnection databaseConnection, ScheduleQueries queries, ScheduleModifier modifier) {
+    public ConsoleMenu(DatabaseConnection databaseConnection, ScheduleJdbcReader jdbcReader,
+                       ScheduleQueries queries, ScheduleModifier modifier) {
         this.databaseConnection = databaseConnection;
+        this.jdbcReader = jdbcReader;
         this.queries = queries;
         this.modifier = modifier;
     }
@@ -49,21 +57,28 @@ public class ConsoleMenu implements CommandLineRunner {
                     0. Выход""");
             String choice = prompt("Выберите пункт: ");
             if (choice == null || choice.equals("0")) {
+                log.info("Завершение работы");
                 return;
             }
+            log.info("Выбран пункт меню {}", choice);
             try {
                 handle(choice);
             } catch (NumberFormatException e) {
+                log.warn("Некорректный ввод: {}", e.getMessage());
                 System.out.println("Ошибка: ожидалось число");
             } catch (DataAccessException e) {
+                log.error("Ошибка БД", e);
                 System.out.println("Ошибка БД: " + e.getMostSpecificCause().getMessage());
+            } catch (SQLException e) {
+                log.error("Ошибка JDBC", e);
+                System.out.println("Ошибка БД: " + e.getMessage());
             }
         }
     }
 
-    private void handle(String choice) {
+    private void handle(String choice) throws SQLException {
         switch (choice) {
-            case "1" -> print(queries.findSchedule());
+            case "1" -> print(jdbcReader.findSchedule());
             case "2" -> print(queries.findTeacherLoad());
             case "3" -> {
                 int day = readDay();
@@ -102,6 +117,7 @@ public class ConsoleMenu implements CommandLineRunner {
             DatabaseMetaData meta = connection.getMetaData();
             System.out.printf("Подключено: %s %s, %s%n",
                     meta.getDatabaseProductName(), meta.getDatabaseProductVersion(), meta.getURL());
+            log.info("Подключено к {} {}", meta.getDatabaseProductName(), meta.getDatabaseProductVersion());
         } finally {
             databaseConnection.releaseConnection(connection);
         }
